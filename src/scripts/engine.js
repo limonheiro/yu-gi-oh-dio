@@ -1,3 +1,4 @@
+
 const state = {
     score: {
         playerScore: 0,
@@ -114,23 +115,28 @@ async function playAudio(status){
     audio.play()
 }
 
+async function showHiddenCard(status){
+    state.fieldCards.player.style.display = status;
+    state.fieldCards.computer.style.display = status;
+}
+
 async function setCardsField(cardId) {
     await removeAllCardsImages();
 
     let computerCardId = await getRandomCardId();
 
-    state.fieldCards.player.style.display = 'block';
-    state.fieldCards.computer.style.display = 'block';
+    showHiddenCard('block');
 
     state.fieldCards.player.src = cardData[cardId].img;
     state.fieldCards.computer.src = cardData[computerCardId].img;
 
     const duelResults = await checkDuelResults(cardId, computerCardId);
-    console.log(duelResults)
+    // console.log(duelResults)
 
     await updateScore();
     await drawButton(duelResults);
 }
+
 
 async function creatCardImage(IdCard, fieldSide) {
     const cardImage = document.createElement('img');
@@ -170,8 +176,10 @@ async function drawCards(cardNumbers, fieldSide) {
 }
 
 function init() {
-    playAudio('egyptian_duel')
+    showHiddenCard('none');
+    
     drawCards(5, playersSider.player1);
     drawCards(5, playersSider.computer);
 }
+document.getElementById("bgm").play();
 init();

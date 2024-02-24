@@ -2,6 +2,11 @@
 
 body {
     user-select: none;
+    cursor: url("../assets/cursor/cursor.cur"), auto;
+}
+
+button, .card{
+    cursor: url("../assets/cursor/dmpen.cur"),pointer;
 }
 
 .bg-video {
@@ -146,8 +151,8 @@ body {
 
 .card-infield {
     height: 11rem;
-    width: 8rem;
-    border: 1px solid #fff;
+    width: 125px;
+    border: 2px solid #fff;
     border-radius: 8px;
 }
 
