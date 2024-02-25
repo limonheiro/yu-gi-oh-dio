@@ -1,4 +1,3 @@
-
 const state = {
     score: {
         playerScore: 0,
@@ -20,33 +19,46 @@ const state = {
 };
 const pathImages = "./src/assets/icons/"
 
+// tipo : pedra = 0 / papel = 1 / tesoura = 2
 const cardData = [{
         id: 0,
         name: 'Blue Eyes White Dragon',
-        type: 'Papel',
-        // src\assets\icons\eye.jpg
+        numberType: 1,
         img: `${pathImages}dragon.png`,
-        WinOf: [1],
-        Loseof: [2]
     }, {
         id: 1,
         name: 'Mago Negro',
-        type: 'Pedra',
-        // src\assets\icons\eye.png
+        numberType: 0,
         img: `${pathImages}magician.png`,
-        WinOf: [2],
-        Loseof: [0]
     },
     {
         id: 2,
         name: 'Exodia',
-        type: 'Tesoura',
-        // src\assets\icons\eye.png
+        numberType: 2,
         img: `${pathImages}exodia.png`,
-        WinOf: [0],
-        Loseof: [1]
     }
 ]
+
+// pe = pedra
+// pa = papel 
+// te = tesoura
+// 
+// 0 = empate
+// 1 = vitoria
+// 2 = derrota
+// 
+//    pe pa te
+// pe 0  1  2
+// pa 1  0  2
+// te 2  1  0
+
+const resultado = [
+    [0, 1, 2],
+    [1, 0, 2],
+    [2, 1, 0]
+]
+
+console.log(resultado[0][1])
 
 const playersSider = {
     player1: 'player-cards',
@@ -55,7 +67,6 @@ const playersSider = {
 
 async function getRandomCardId() {
     const randomIndex = Math.floor(Math.random() * cardData.length);
-    // return cardData[randomIndex];
     return randomIndex
 }
 
@@ -71,21 +82,12 @@ async function removeAllCardsImages() {
 }
 
 async function checkDuelResults(cardId, computerCardId) {
-    const player = cardData[cardId];
-    let duelResults = 'Empate';
+    const duelResults = ['Empate', 'Venceu!', 'Perdeu!']
 
-
-    if (player.WinOf.includes(computerCardId)) {
-        state.score.playerScore++;
-        duelResults = 'Venceu!';
-        playAudio('win')
-    } else if(player.Loseof.includes(computerCardId)) {
-        state.score.computerScore++;
-        duelResults = 'Perdeu!';
-        playAudio('lose')
-    }
-
-    return duelResults
+    return duelResults[
+        resultado[cardData[cardId].numberType]
+        [cardData[computerCardId].numberType]
+    ];
 }
 
 async function drawButton(duelResults) {
@@ -97,7 +99,7 @@ async function updateScore() {
     state.score.scoreBox.innerText = `Win : ${state.score.playerScore} | Lose : ${state.score.computerScore}`
 }
 
-async function resetDuel(){
+async function resetDuel() {
     state.cardSprites.avatar.src = '';
     state.actions.button.style.display = 'none';
 
@@ -110,12 +112,12 @@ async function resetDuel(){
     init();
 }
 
-async function playAudio(status){
-    const audio  = new Audio(`./src/assets/audios/${status}.wav`)
+async function playAudio(status) {
+    const audio = new Audio(`./src/assets/audios/${status}.wav`)
     audio.play()
 }
 
-async function showHiddenCard(status){
+async function showHiddenCard(status) {
     state.fieldCards.player.style.display = status;
     state.fieldCards.computer.style.display = status;
 }
@@ -131,7 +133,6 @@ async function setCardsField(cardId) {
     state.fieldCards.computer.src = cardData[computerCardId].img;
 
     const duelResults = await checkDuelResults(cardId, computerCardId);
-    // console.log(duelResults)
 
     await updateScore();
     await drawButton(duelResults);
@@ -154,30 +155,29 @@ async function creatCardImage(IdCard, fieldSide) {
         });
     };
 
-
-
     return cardImage
 }
 
 async function drawSelectCard(id) {
-    // console.log(cardData, 'id'+id)
+    // tipo : pedra = 0 / papel = 1 / tesoura = 2
+    const tipo = ['pedra','papel','tesoura']
+
     state.cardSprites.avatar.src = cardData[id].img;
     state.cardSprites.name.innerText = cardData[id].name;
-    state.cardSprites.type.innerText = `Atributo: ${cardData[id].type}`;
+    state.cardSprites.type.innerText = `Atributo: ${tipo[cardData[id].numberType]}`;
 }
 
 async function drawCards(cardNumbers, fieldSide) {
     for (let i = 0; i < cardNumbers; i++) {
         const randomIdCard = await getRandomCardId();
         const cardImage = await creatCardImage(randomIdCard, fieldSide);
-        // console.log(fieldSide)
         document.getElementById(fieldSide).appendChild(cardImage)
     }
 }
 
 function init() {
     showHiddenCard('none');
-    
+
     drawCards(5, playersSider.player1);
     drawCards(5, playersSider.computer);
 }
