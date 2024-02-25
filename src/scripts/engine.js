@@ -82,12 +82,12 @@ async function removeAllCardsImages() {
 }
 
 async function checkDuelResults(cardId, computerCardId) {
-    const duelResults = ['Empate', 'Venceu!', 'Perdeu!']
-
-    return duelResults[
-        resultado[cardData[cardId].numberType]
-        [cardData[computerCardId].numberType]
-    ];
+    const Results = ['Empate', 'Venceu!', 'Perdeu!']
+    const result = resultado[cardData[cardId].numberType][cardData[computerCardId].numberType]
+    
+    const duelResults = Results[result]
+    playAudio(result);
+    return duelResults
 }
 
 async function drawButton(duelResults) {
@@ -113,7 +113,9 @@ async function resetDuel() {
 }
 
 async function playAudio(status) {
-    const audio = new Audio(`./src/assets/audios/${status}.wav`)
+    console.log(status)
+    const file = ['draw', 'win', 'lose']
+    const audio = new Audio(`./src/assets/audios/${file[status]}.wav`)
     audio.play()
 }
 
